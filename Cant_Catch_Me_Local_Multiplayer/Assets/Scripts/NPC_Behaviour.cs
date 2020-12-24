@@ -9,6 +9,7 @@ public class NPC_Behaviour : MonoBehaviour
     public float speed;
     public Transform[] bounds;
     public Vector3[] bounds_Positions;
+    public Transform[] points_Of_Interest;
 
    
 
@@ -23,6 +24,7 @@ public class NPC_Behaviour : MonoBehaviour
     private bool m_Path_Usable = false;
     [SerializeField]
     private bool m_Can_Walk = false;
+    private bool m_Is_Alive = true;
     private NavMeshAgent self;
     private NavMeshPath path;
     private Vector3 custom_Path;
@@ -40,23 +42,25 @@ public class NPC_Behaviour : MonoBehaviour
     }
 
     // all NPC's will be updated from an NPC manager, this way we reduce the amount of update calls per frame.
-    //testing: use regular update for testing only
-    void Update()
+    
+    public void Custom_Update()
     {
-        if (m_Path_Usable && m_Can_Walk)
-        {
-            Movement();
-        }
-
-        if (!self.hasPath)
-        {
-            Debug.Log("Finished Path");
-            if (m_Can_Walk)
+        if (m_Is_Alive) {
+            if (m_Path_Usable && m_Can_Walk)
             {
-                m_Random_Timer = Random.Range(0.5f, 1f);
-                m_Can_Walk = false;
+                Movement();
             }
-            Wait_For_New_Path();
+
+            if (!self.hasPath)
+            {
+                Debug.Log("Finished Path");
+                if (m_Can_Walk)
+                {
+                    m_Random_Timer = Random.Range(0.5f, 4f);
+                    m_Can_Walk = false;
+                }
+                Wait_For_New_Path();
+            }
         }
     }
 
@@ -64,6 +68,7 @@ public class NPC_Behaviour : MonoBehaviour
     void Movement()
     {
         
+
         if (self.hasPath)
         {
             Vector3 _dir = self.steeringTarget - transform.position;
@@ -83,8 +88,17 @@ public class NPC_Behaviour : MonoBehaviour
 
     void Pick_New_Point()
     {
-        Vector3 _new_Pos = new Vector3(Random.Range(bounds_Positions[0].x, bounds_Positions[1].x)
-            , transform.position.y, Random.Range(bounds_Positions[2].z, bounds_Positions[3].z));
+        int _random_Choice = Random.Range(0,2);
+        Vector3 _new_Pos;
+        if (_random_Choice == 0) {
+            _new_Pos = new Vector3(Random.Range(bounds_Positions[0].x, bounds_Positions[1].x)
+                , transform.position.y, Random.Range(bounds_Positions[2].z, bounds_Positions[3].z));
+        }else
+        {
+            int _random_POI = Random.Range(0, points_Of_Interest.Length);
+            _new_Pos = new Vector3(points_Of_Interest[_random_POI].position.x + Random.insideUnitCircle.x, transform.position.y,
+               points_Of_Interest[_random_POI].position.z + Random.insideUnitCircle.y);
+        }
 
         Get_Path(_new_Pos);
     }
