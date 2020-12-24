@@ -17,6 +17,8 @@ public class Player_Behaviour : MonoBehaviour
     [Tooltip("Input pick up and drop off speed")]
     public float input_Speed;
 
+    [HideInInspector]
+    public bool is_Using = false;
 
     //private
 
@@ -61,12 +63,9 @@ public class Player_Behaviour : MonoBehaviour
 
     void Player_Movement()
     {
-        m_Input_X = Mathf.Lerp(m_Input_X, m_Horizontal_Input, Time.deltaTime * input_Speed);
-        m_Input_Y = Mathf.Lerp(m_Input_Y, m_Vertical_Input, Time.deltaTime * input_Speed);
-
-
-        vel.x = (m_Input_X * speed) * m_Input_Modifier;
-        vel.z = (m_Input_Y * speed) * m_Input_Modifier;
+       
+        vel.x = (m_Horizontal_Input * speed);
+        vel.z = (m_Vertical_Input * speed);
 
 
         float _Player_Forward_X = m_Input_X * m_Input_Modifier;
