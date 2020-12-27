@@ -6,7 +6,8 @@ using UnityEngine.AI;
 public class NPC_Behaviour : MonoBehaviour
 {
 
-    public float speed;
+    [HideInInspector]public float speed;
+    public float original_Speed, run_Speed; 
     public Transform[] bounds;
     public Vector3[] bounds_Positions;
     public Transform[] points_Of_Interest;
@@ -89,6 +90,7 @@ public class NPC_Behaviour : MonoBehaviour
     void Pick_New_Point()
     {
         int _random_Choice = Random.Range(0,2);
+        int _run_Choice = Random.Range(0,2);
         Vector3 _new_Pos;
         if (_random_Choice == 0) {
             _new_Pos = new Vector3(Random.Range(bounds_Positions[0].x, bounds_Positions[1].x)
@@ -100,6 +102,8 @@ public class NPC_Behaviour : MonoBehaviour
                points_Of_Interest[_random_POI].position.z + Random.insideUnitCircle.y);
         }
 
+        speed = _random_Choice == 0 ? original_Speed : run_Speed;
+        transform.GetChild(0).GetComponent<MeshRenderer>().material.color = _random_Choice == 0 ? Color.white : Color.blue;
         Get_Path(_new_Pos);
     }
 
